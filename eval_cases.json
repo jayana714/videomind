@@ -1,0 +1,93 @@
+[
+  {
+    "video_name": "ArcGIS Spatial Join (short tutorial)",
+    "video_url": "https://youtu.be/PZwa0Mzq-Dk",
+    "cases": [
+      {
+        "question": "What is the target feature layer in the spatial join?",
+        "expect_contains": ["Residence"],
+        "note": "Basic fact retrieval on a short, simple video"
+      },
+      {
+        "question": "What is the join feature layer in the spatial join?",
+        "expect_contains": ["School"],
+        "note": "Basic fact retrieval"
+      },
+      {
+        "question": "What match option is used in the spatial join?",
+        "expect_contains": ["closest"],
+        "note": "Should be case-insensitive-safe since we lowercase before checking"
+      },
+      {
+        "question": "What is the capital of France?",
+        "expect_contains": ["video"],
+        "expect_not_contains": ["Paris"],
+        "note": "Off-topic question -- must honestly decline, never answer from outside knowledge"
+      }
+    ]
+  },
+  {
+    "video_name": "Power BI Beginner to Pro (long, Pragmatic Works)",
+    "video_url": "https://youtu.be/-Dy5_Nen4gY",
+    "cases": [
+      {
+        "question": "Who are the instructors leading this Power BI training?",
+        "expect_contains": ["Devin"],
+        "note": "Specific-fact retrieval on a 3+ hour video, 290 chunks"
+      },
+      {
+        "question": "What real-world dataset is used as the example in this training?",
+        "expect_contains": ["FDIC"],
+        "note": "Tests whether retrieval finds a specific detail buried in a long video"
+      },
+      {
+        "question": "Which state has the most failed banks in the example dataset?",
+        "expect_contains": ["Georgia"],
+        "note": "A precise fact -- good regression check for retrieval accuracy on long content"
+      }
+    ]
+  },
+  {
+    "video_name": "Azure Synapse Analytics Training (Mitchell Pearson, Pragmatic Works)",
+    "video_url": "https://www.youtube.com/live/lLrjaVdBuM0",
+    "cases": [
+      {
+        "question": "Who is presenting this Azure Synapse Analytics training?",
+        "expect_contains": ["Mitchell"],
+        "note": "Basic fact retrieval"
+      },
+      {
+        "question": "What company is hosting this training?",
+        "expect_contains": ["Pragmatic"],
+        "note": "Basic fact retrieval"
+      },
+      {
+        "question": "What is the weather like today?",
+        "expect_contains": ["video"],
+        "note": "Off-topic question -- must honestly decline"
+      }
+    ]
+  },
+  {
+    "video_name": "PASTE YOUR POWER AUTOMATE VIDEO URL HERE",
+    "video_url": "REPLACE_ME",
+    "cases": [
+      {
+        "question": "Who is the trainer for the SQL course?",
+        "expect_contains": ["Anil"],
+        "note": "Basic fact retrieval"
+      },
+      {
+        "question": "Who receives the Teams notification?",
+        "expect_contains": ["Sunil"],
+        "note": "Regression test: this incorrectly said 'not covered' before the k=5 retrieval fix"
+      },
+      {
+        "question": "What does the Switch control do?",
+        "expect_contains": ["course"],
+        "expect_not_contains": ["don't see", "no information", "not covered"],
+        "note": "Regression test: this used to incorrectly claim no information existed"
+      }
+    ]
+  }
+]

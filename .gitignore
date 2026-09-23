@@ -1,0 +1,21 @@
+# Secrets -- never commit these
+.env
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Video-specific generated data
+audio.mp3
+audio.mp4
+video.mp4
+chroma_db/
+keyframes/
+transcript.json
+chunks.json
+_groq_chunk_*.mp3
+
+# macOS
+.DS_Store
