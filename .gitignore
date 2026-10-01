@@ -16,6 +16,7 @@ keyframes/
 transcript.json
 chunks.json
 _groq_chunk_*.mp3
+eval_cache/
 
 # macOS
 .DS_Store

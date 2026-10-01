@@ -23,7 +23,11 @@ def build_retriever():
         embedding_function=embeddings,
         persist_directory="./chroma_db",
     )
-    return vectorstore.as_retriever(search_kwargs={"k": 5})
+    # k=5 missed a passing GraphQL mention buried in a REST-limitations chunk when
+    # asked directly about GraphQL, even though that same chunk surfaced fine for a
+    # differently-worded question. Bumped to 8 to improve recall on brief/passing
+    # mentions, at the cost of slightly more (and slightly noisier) context per answer.
+    return vectorstore.as_retriever(search_kwargs={"k": 8})
 
 
 retriever = build_retriever()
@@ -37,6 +41,15 @@ llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=1024)
 # ("give me a summary") were observed getting classified differently across
 # separate calls, which is a real reliability problem, not a rare edge case.
 classifier_llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=10, temperature=0)
+
+# Separate model just for full-video summaries. 1024 tokens (the shared `llm`'s cap)
+# is plenty for a normal Q&A answer but was silently truncating summaries mid-sentence
+# on long videos with lots of ground to cover (transcript + keyframes both folded in) --
+# the API just stops generating once it hits the cap, with no error, so it looked like
+# a content bug until the raw output showed it cutting off with no closing punctuation.
+# Kept separate from `llm` so ordinary Q&A calls stay fast/cheap and this only costs
+# more on the summary path where it's actually needed.
+summary_llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=4096)
 
 SYSTEM_PROMPT = """You are answering questions about a video using ONLY the transcript excerpts given to you as context.
 - Base your answer strictly on the provided excerpts. If the excerpts don't contain the answer, say so instead of guessing.
@@ -175,7 +188,7 @@ summary_prompt = ChatPromptTemplate.from_messages([
     ("human", "Full video transcript, in order:\n\n{transcript}\n\nRequest: {question}"),
 ])
 
-summary_chain = summary_prompt | llm | StrOutputParser()
+summary_chain = summary_prompt | summary_llm | StrOutputParser()
 
 
 def format_chunks(chunks):
@@ -271,7 +284,7 @@ correction_prompt = ChatPromptTemplate.from_messages([
               "Problem found by fact-checking:\n{explanation}\n\nCorrected summary:"),
 ])
 
-correction_chain = correction_prompt | llm | StrOutputParser()
+correction_chain = correction_prompt | summary_llm | StrOutputParser()
 
 
 def correct_summary(summary, explanation, chunks_path="chunks.json", keyframes_path="keyframes/keyframes.json"):

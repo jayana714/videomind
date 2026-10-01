@@ -67,7 +67,13 @@ def get_video_duration(url):
     ydl_opts = {
         "quiet": True,
         "extractor_args": {"youtube": {"player_client": ["android", "web"]}},
+        # Reverted cookies-from-browser -- it broke normal downloads with a 403
+        # (see download_video.py for the full explanation). Back to SABR-only.
     }
+    # Same opt-in cookies.txt support as download_audio.py/download_video.py --
+    # only active if the file exists (eval runs), no effect on normal app usage.
+    if os.path.exists("cookies.txt"):
+        ydl_opts["cookiefile"] = "cookies.txt"
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
         return info.get("duration")  # seconds; may be None for some live streams
