@@ -12,7 +12,7 @@ and currently passes **86% (6/7)** on factual retrieval, multimodal visual groun
 refusal of off-topic/unanswerable questions. The one failure is a documented, understood
 limitation (see below), not an unexplained gap.
 
-*(demo GIF / screenshot goes here)*
+*![VideoMind demo](assets/demo.png)*
 
 ## What it does
 
