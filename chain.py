@@ -52,7 +52,13 @@ llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=1024)
 # answer for the SAME input every time -- without this, identical questions
 # ("give me a summary") were observed getting classified differently across
 # separate calls, which is a real reliability problem, not a rare edge case.
-classifier_llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=10, temperature=0)
+#
+# Some Anthropic models/API versions now reject the temperature parameter outright
+# ("temperature: Extra inputs are not permitted"). So: try temperature=0 first, and if the API
+# refuses it, fall back to the same model without it, instead of failing every question.
+_classifier_strict = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=10, temperature=0)
+_classifier_plain = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=10)
+classifier_llm = _classifier_strict.with_fallbacks([_classifier_plain])
 
 # Separate model just for full-video summaries. 1024 tokens (the shared `llm`'s cap)
 # is plenty for a normal Q&A answer but was silently truncating summaries mid-sentence
