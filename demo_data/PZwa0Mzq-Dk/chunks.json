@@ -1,0 +1,27 @@
+[
+  {
+    "start": 0.0,
+    "end": 41.34,
+    "text": " Today we're going to use the Spatial Join tool in ArcGIS Pro. The Spatial Join tool transfers attribute information from one dataset table to another, based on their location or proximity. This is great if you want to move attribute information from one source to another. For example, our map is showing the locations of schools and residences. Let's say we want to know the closest school to each residence. The Spatial Join can do this for you. Let's actually give it a try and check out the results to make a better sense of what this tool can do. First, click on the Analysis tab. Then, select the Tools button. The Geoprocessing tools will appear on the right-hand side."
+  },
+  {
+    "start": 41.34,
+    "end": 82.28,
+    "text": " Now, type in Spatial Join in the search bar. Alright, this must be the right tool. Click the Spatial Join tool. Let's take a look at the inputs required. The first input is the Target Feature layer. In our case we're going to use the Residences layer, which are the brown pushpins on the map. This is the layer where the joined information will get transferred to. The second input is the Join feature. So in our case we'll use the School layer, which are the purple pushpins. This means that the attribute information like the school name will go into the target features. We're just going to go with a 1 to 1 option, so only one feature will be joined into the target feature."
+  },
+  {
+    "start": 82.28,
+    "end": 123.5075,
+    "text": " For the match option, we're going to select the closest option. What does this all mean Let recap So all the attribute information from the school layer will get transferred into the residences layer based on the closest proximity It only going to take the closest school and join that information so it a one relationship There's also an option for a field map, but we're going to leave this as it is. I'll keep the output feature class with the default name. I'll also leave everything else as it is. Okay, let's give this a try. Let's push the run button and see what happens. After we run the tool, it just takes a couple of seconds. You'll see the output layer eventually pops up in the map."
+  },
+  {
+    "start": 124.4275,
+    "end": 169.9675,
+    "text": " Now let's take a look at some of the attributes from the spatial join layer. As you can see, there is a new column called Name, which is the school name. So it looks like the spatial join worked by transferring this information over. In our case, it is either Richmond Primary School or Norwood Primary School. And it's based on the closest distance to the residence. Let's select a couple to make sure it makes sense. So this residence is closer to Richmond Primary School. That looks correct on the map. And this one is closer to Norwood Primary School, as expected. So in this tutorial, we used the spatial join tool in ArcGIS Pro. After using the spatial join tool, it successfully identified which school is closest to each residence."
+  },
+  {
+    "start": 170.7475,
+    "end": 184.1875,
+    "text": " We hope you enjoyed our video. Please subscribe to our channel so we can make more GIS tutorials. Don't forget to fill out the comment form for any ideas you have for us. We'd love to hear from you. Alright, bye for now."
+  }
+]

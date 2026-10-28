@@ -1,0 +1,37 @@
+[
+  {
+    "path": "keyframes/frame_0000.jpg",
+    "timestamp": 0.0,
+    "description": "# ArcGIS Map Application Screen\n\nThis is ArcGIS (likely ArcGIS Pro or Online) displaying a map of Adelaide, Australia with various geographic features and data points. The left panel shows a \"Contents\" sidebar with a \"Drawing Order\" section listing layers including \"Residence,\" \"Schools,\" \"World Topographic Map,\" and \"World Hillshade,\" with checkboxes indicating visibility. The main map view shows purple markers for primary schools (Norwood Primary School and Richmond Primary School are labeled), tan-colored markers for residences, and a light tan background map with roads, neighborhoods, and topographic features. The toolbar at the top includes standard GIS tools for analysis, visualization, and map manipulation."
+  },
+  {
+    "path": "keyframes/frame_0001.jpg",
+    "timestamp": 36.0,
+    "description": "# ArcGIS Pro Map View\n\nThis screenshot shows ArcGIS Pro with the **Analysis** tab selected, displaying a map of Adelaide, Australia. The map shows several layers including Residence (orange pins), Schools (purple pins for Norwood Primary School and Richmond Primary School), World Topographic Map, and World Hillshade. The left panel displays the Contents/Drawing Order of all active layers, while the main view presents an interactive map with various geographic features, streets, and landmarks visible."
+  },
+  {
+    "path": "keyframes/frame_0002.jpg",
+    "timestamp": 46.0,
+    "description": "# ArcGIS Pro Geoprocessing Interface\n\nThis screen shows **ArcGIS Pro** with the **Analysis** tab active, displaying a map of Adelaide, Australia with various points of interest (schools, residences) marked with colored pins. The left panel shows a \"Contents\" section with a drawing order listing map layers including \"Residence,\" \"Schools,\" and reference maps. On the right side, a **Geoprocessing** panel is open, showing multiple spatial analysis tools such as \"Spatial Join,\" \"Add Spatial Axis,\" \"Create Spatial Reference,\" \"Interact,\" and \"Create Space Time Cube by Aggregating Points,\" with detailed descriptions for each tool. This appears to be the setup stage for performing spatial analysis operations on the map data."
+  },
+  {
+    "path": "keyframes/frame_0003.jpg",
+    "timestamp": 56.0,
+    "description": "# ArcGIS Pro Geoprocessing Analysis\n\nThis screen shows ArcGIS Pro with a spatial analysis workflow in progress. The main map display shows Adelaide, Australia with various point features marked, including schools (purple pins) and residences (tan/brown pins). On the right side, the Geoprocessing panel is open with Spatial Join parameters visible, including options for Target Features (showing Residency and Schools), Join Operation, and Match Option. The left Contents panel displays the drawing order of map layers including Map, Residence, Schools, World Topographic Map, and World Hillshade. This appears to be the setup phase of performing a spatial join operation between different feature classes."
+  },
+  {
+    "path": "keyframes/frame_0004.jpg",
+    "timestamp": 120.0,
+    "description": "This is ArcGIS Pro displaying a spatial analysis workflow focused on geoprocessing. The screen shows a map of Adelaide, Australia with various locations marked (schools and residences indicated by purple and brown pins), and on the right side is a \"Geoprocessing\" panel with parameters for a spatial join operation. The left panel shows the \"Contents\" with drawing order layers including \"Residence_Spatialisation,\" \"Residence,\" and \"Schools,\" while the top menu bar displays analysis and geoprocessing tools. This appears to be mid-workflow in performing a spatial join analysis between the residence and schools datasets."
+  },
+  {
+    "path": "keyframes/frame_0005.jpg",
+    "timestamp": 130.0,
+    "description": "This screen shows ArcGIS Pro with a spatial analysis workflow in progress. The central map displays primary schools in an Adelaide area (marked with purple pins), and below it is an attribute table showing the \"Residence_Spatialization\" layer with fields including OBJECTID, SHAPE, JINL_Column, TARGET_FID, ID, and name. On the right side, the Geoprocessing panel is open with spatial join parameters displayed, showing target features (Residence) and join features (Schools) options. The left panel shows the drawing order and layer structure, indicating this is a spatial analysis step involving residential and school data."
+  },
+  {
+    "path": "keyframes/frame_0006.jpg",
+    "timestamp": 140.0,
+    "description": "# ArcGIS Pro Spatial Join Analysis\n\nThis screenshot shows ArcGIS Pro with a spatial join operation in progress. The interface displays a map of Adelaide, Australia with residences marked as tan pins and schools marked as purple pins, while a data table below lists the results showing matched features between the two datasets (Residence_SpatialJoin table with fields like OBJECTID, SHAPE, Join_Count, TARGET_FID, and name). The right panel shows the \"Geoprocessing\" tool settings, specifically the \"Spatial Join\" parameters including target features (Residence), join features (Schools), and join operation options. This appears to be a spatial join workflow where proximity analysis between residential and school locations is being configured or executed."
+  }
+]

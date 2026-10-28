@@ -2,8 +2,6 @@ import os
 import json
 import hashlib
 from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
 from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -11,13 +9,27 @@ from langchain_core.runnables import RunnablePassthrough
 
 load_dotenv()
 
-# Same embedding model from Steps 4-6, now wrapped as a LangChain component.
-# Using the identical model name keeps it compatible with the existing chroma_db —
-# no need to re-embed or re-store anything from Step 5.
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+# DEMO_MODE=1 is the lightweight hosted build (see demo_app.py): pre-processed videos,
+# vectors precomputed offline, and queries embedded with the same model via ONNX
+# (fastembed) instead of PyTorch. That keeps memory small enough for a free host.
+# Everything else about the pipeline -- routing, generation, verification -- is unchanged.
+DEMO_MODE = os.environ.get("DEMO_MODE") == "1"
+
+if DEMO_MODE:
+    import demo_store
+    embeddings = None
+else:
+    from langchain_huggingface import HuggingFaceEmbeddings
+    from langchain_chroma import Chroma
+    # Same embedding model from Steps 4-6, now wrapped as a LangChain component.
+    # Using the identical model name keeps it compatible with the existing chroma_db —
+    # no need to re-embed or re-store anything from Step 5.
+    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 def build_retriever():
     """Connect (or reconnect) to whatever is currently stored in Chroma."""
+    if DEMO_MODE:
+        return demo_store.audio_retriever(k=8)
     vectorstore = Chroma(
         collection_name="video_chunks",
         embedding_function=embeddings,
@@ -125,9 +137,17 @@ def cache_summary(question, answer, verification):
 
 
 CONDENSE_SYSTEM_PROMPT = """Given a conversation history and a new follow-up question, rewrite the
-follow-up question as a standalone question that includes whatever context from the history it
-depends on. If the follow-up question is already standalone (doesn't rely on prior messages),
-return it completely unchanged. Output ONLY the rewritten question -- no explanation, no quotes."""
+follow-up question as a standalone question ONLY IF it depends on earlier messages (pronouns like
+"it" or "that", or phrases like "what about the second one").
+
+Strict rules:
+- If the question already makes sense on its own, return it completely unchanged, word for word.
+  Do not add context from the history to a question that doesn't need it.
+- When you do rewrite, only fill in the missing references. NEVER change, correct, or drop any
+  claim or assumption the user made -- even if the history suggests it is wrong. If the user asks
+  why something was "farthest" and the history says "closest", keep "farthest": the answer step
+  is responsible for pointing out the mistake, not you.
+Output ONLY the question -- no explanation, no quotes."""
 
 condense_prompt = ChatPromptTemplate.from_messages([
     ("system", CONDENSE_SYSTEM_PROMPT),

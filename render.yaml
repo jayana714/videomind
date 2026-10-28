@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: videomind
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile.demo
+    healthCheckPath: /health
+    envVars:
+      # Paste your key in the Render dashboard -- never commit it.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      # Hard cap on questions per day, so a busy day can't run up your API bill.
+      - key: DAILY_QUESTION_LIMIT
+        value: "15"

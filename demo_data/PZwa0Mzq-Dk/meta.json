@@ -1,0 +1,10 @@
+{
+  "name": "ArcGIS Spatial Join (short tutorial)",
+  "url": "https://youtu.be/PZwa0Mzq-Dk",
+  "questions": [
+    "What is the Spatial Join tool used for in ArcGIS Pro?",
+    "How do you access the Spatial Join tool in ArcGIS Pro?",
+    "What are the Target Feature layer and Join Feature layer in this example?",
+    "How does the Spatial Join tool determine which school to associate with each residence?"
+  ]
+}

@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements-demo.txt .
+RUN pip install --no-cache-dir -r requirements-demo.txt
+
+# Download the embedding model at BUILD time so the first visitor's question
+# doesn't wait on (or fail because of) a model download.
+ENV FASTEMBED_CACHE=/app/models
+RUN python -c "from fastembed import TextEmbedding; TextEmbedding('sentence-transformers/all-MiniLM-L6-v2', cache_dir='/app/models')"
+
+COPY chain.py graph.py qa.py demo_store.py demo_app.py ./
+COPY demo_data ./demo_data
+
+ENV DEMO_MODE=1
+EXPOSE 7860
+# Render injects $PORT; default to 7860 for local `docker run`.
+CMD ["sh", "-c", "uvicorn demo_app:app --host 0.0.0.0 --port ${PORT:-7860}"]

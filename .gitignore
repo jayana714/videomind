@@ -1,5 +1,6 @@
 # Secrets -- never commit these
 .env
+cookies.txt
 
 # Python
 venv/
@@ -7,16 +8,19 @@ __pycache__/
 *.pyc
 *.egg-info/
 
-# Video-specific generated data
-audio.mp3
-audio.mp4
-video.mp4
+# Video-specific generated data (project root only -- note the leading slashes)
+/audio.mp3
+/audio.mp4
+/video.mp4
+/transcript.json
+/chunks.json
+/_groq_chunk_*.mp3
 chroma_db/
 keyframes/
-transcript.json
-chunks.json
-_groq_chunk_*.mp3
 eval_cache/
+
+# Downloaded embedding model (about 90 MB)
+models/
 
 # macOS
 .DS_Store

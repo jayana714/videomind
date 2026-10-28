@@ -15,9 +15,19 @@ Be especially alert to invented specifics: a made-up place name, a label that is
 or a detail confused with something else in the image (for example, mistaking a proper noun that's
 part of a label -- like a school name -- for an actual place name).
 
+Important rules about what counts as an error:
+- Answer "no" ONLY if the image CLEARLY contradicts a claim, or the description asserts a specific
+  detail that is clearly not there. Do not answer "no" for minor omissions (a column or button the
+  description didn't mention) or for wording differences.
+- Small or blurry text is often hard to read. If a label or value is not clearly legible, that is
+  NOT an error in the description -- answer "yes" unless the image clearly shows something different.
+  Never "correct" a description by guessing at text you can't read clearly.
+- Your verdict must match your explanation. If your explanation says the description is accurate,
+  the verdict must be "yes".
+
 Respond in exactly this format:
 Grounded: yes or no
-Explanation: one or two sentences. If "no", name exactly which claim is not actually visible."""
+Explanation: one or two sentences. If "no", name exactly which claim is clearly contradicted."""
 
 
 def upscale_image(image_path, scale=2):
@@ -51,8 +61,11 @@ def verify_keyframe_description(image_path, description, model="claude-haiku-4-5
 
 CORRECTION_SYSTEM_PROMPT = """You wrote a description of an image, and a fact-checker found a
 specific problem with it. Look at the image again and fix ONLY the issue described -- keep
-everything else in the description that was already correct. Output the complete corrected
-description, not just the fixed part."""
+everything else in the description that was already correct. If the problem involves text you
+cannot read clearly (small or blurry), do NOT replace it with a new guess: remove that specific
+detail or describe it generically (for example, "a layer name that is hard to read"). Only state a
+specific label or value if it is clearly legible. Output the complete corrected description, not
+just the fixed part."""
 
 
 def correct_keyframe_description(image_path, description, explanation, model="claude-haiku-4-5-20251001"):

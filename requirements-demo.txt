@@ -1,0 +1,11 @@
+# Hosted demo only -- deliberately NO torch / sentence-transformers / chromadb /
+# opencv / whisper, so it fits in a free host's ~512 MB of RAM.
+langchain-core
+langchain-anthropic
+langgraph
+fastembed
+numpy
+gradio
+fastapi
+uvicorn
+python-dotenv

@@ -14,6 +14,7 @@ from verify_keyframes import verify_all_keyframes
 from store_keyframes import store_keyframes
 import chain as chain_module
 import graph as graph_module
+from qa import respond, format_history  # noqa: F401  (re-exported; run_evals.py imports respond from here)
 
 load_dotenv()
 
@@ -43,23 +44,6 @@ def generate_example_questions(chunks):
     response = chain_module.llm.invoke(prompt)
     questions = [q.strip("-• ").strip() for q in response.content.split("\n") if q.strip()]
     return questions[:4]
-
-
-def format_history(history):
-    """Turns Gradio's chat history into plain text for the condense step.
-    Handles both the dict-based and legacy tuple-based history formats."""
-    lines = []
-    for turn in history:
-        if isinstance(turn, dict):
-            role, content = turn.get("role"), turn.get("content", "")
-            content = content.split("\n\n---\n")[0]  # drop the ✅/⚠️ badge line
-            lines.append(f"{'User' if role == 'user' else 'Assistant'}: {content}")
-        else:
-            user_msg, bot_msg = turn
-            lines.append(f"User: {user_msg}")
-            if bot_msg:
-                lines.append(f"Assistant: {bot_msg.split(chr(10)+chr(10)+'---'+chr(10))[0]}")
-    return "\n".join(lines)
 
 
 def get_video_duration(url):
@@ -156,57 +140,6 @@ def process_video(url, progress=gr.Progress()):
         return f"❌ Something went wrong: {e}", ""
 
 
-def respond(message, history):
-    history_text = format_history(history)
-    standalone_query = chain_module.condense_question(message, history_text)
-    print(f"[Rewritten query: {standalone_query}]")
-
-    intent = chain_module.classify_intent(standalone_query)
-    print(f"[Intent: {intent}]")
-
-    if intent == "summary":
-        # Broad questions get the WHOLE transcript, not just 3 retrieved chunks --
-        # that's the only way to actually cover a whole video, not a fragment of it.
-        # Cache is keyed on the RAW message, not standalone_query -- condense_question
-        # can subtly reword even an already-standalone repeat, which would otherwise
-        # silently break exact-match caching on a word-for-word repeated question.
-        cached = chain_module.get_cached_summary(message)
-        if cached:
-            answer, verification = cached
-            print("[Using cached summary — no API calls made]")
-        else:
-            answer = chain_module.summarize_video(standalone_query)
-            verification = chain_module.verify_summary(answer)
-            grounded = "yes" in verification.lower().split("\n")[0]
-
-            if not grounded:
-                explanation = verification.split("Explanation:", 1)[-1].strip()
-                print(f"[Verification flagged an issue, attempting correction: {explanation}]")
-                answer = chain_module.correct_summary(answer, explanation)
-                # One correction attempt only -- re-verifying again would double the
-                # cost a second time for diminishing returns; trust the targeted fix.
-
-            chain_module.cache_summary(message, answer, verification)
-
-        grounded = "yes" in verification.lower().split("\n")[0]
-        if grounded:
-            badge = "✅ Verified against full transcript"
-        else:
-            badge = "✅ Auto-corrected after an initial check flagged an issue"
-        if cached:
-            badge += " (cached — instant, no cost)"
-        return f"{answer}\n\n---\n{badge}"
-
-    # Specific questions now go through the multimodal router (Step 4) instead of
-    # audio-only retrieval -- this is what actually makes the visual pipeline usable
-    # from the chat itself, not just from graph.py's standalone test script.
-    answer, visual_paths = graph_module.ask_multimodal(standalone_query)
-    badge = "🎬 Answered using this video's audio and/or visual content"
-    if visual_paths:
-        badge += f" ({len(visual_paths)} frame{'s' if len(visual_paths) != 1 else ''} referenced)"
-    return f"{answer}\n\n---\n{badge}"
-
-
 with gr.Blocks(theme=gr.themes.Soft(primary_hue="indigo", secondary_hue="slate")) as demo:
     gr.Markdown("# 🎬 VideoMind")
     gr.Markdown(
@@ -239,4 +172,7 @@ if __name__ == "__main__":
     if not os.environ.get("ANTHROPIC_API_KEY"):
         print("Set ANTHROPIC_API_KEY in your .env file first.")
     else:
-        demo.launch()
+        # Render (and most PaaS hosts) assign the port via $PORT and expect the
+        # app to bind on 0.0.0.0, not Gradio's local-only default -- without this
+        # the deployed service never becomes reachable even though it "runs".
+        demo.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)))
