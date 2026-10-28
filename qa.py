@@ -6,24 +6,40 @@ import chain as chain_module
 import graph as graph_module
 
 
+def _as_text(content):
+    """Gradio's message content is a plain string in older versions, but a list of content
+    blocks (e.g. [{"type": "text", "text": "..."}]) in newer ones -- the hosted build installs
+    the newest. Flattens any of those shapes to a string."""
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, dict):
+        return _as_text(content.get("text", content.get("content", "")))
+    if isinstance(content, (list, tuple)):
+        return "".join(_as_text(part) for part in content)
+    return str(content)
+
+
 def format_history(history):
     """Turns Gradio's chat history into plain text for the condense step.
     Handles both the dict-based and legacy tuple-based history formats."""
     lines = []
     for turn in history:
         if isinstance(turn, dict):
-            role, content = turn.get("role"), turn.get("content", "")
+            role, content = turn.get("role"), _as_text(turn.get("content", ""))
             content = content.split("\n\n---\n")[0]  # drop the ✅/⚠️ badge line
             lines.append(f"{'User' if role == 'user' else 'Assistant'}: {content}")
         else:
             user_msg, bot_msg = turn
-            lines.append(f"User: {user_msg}")
+            lines.append(f"User: {_as_text(user_msg)}")
             if bot_msg:
-                lines.append(f"Assistant: {bot_msg.split(chr(10)+chr(10)+'---'+chr(10))[0]}")
+                lines.append(f"Assistant: {_as_text(bot_msg).split(chr(10)+chr(10)+'---'+chr(10))[0]}")
     return "\n".join(lines)
 
 
 def respond(message, history):
+    message = _as_text(message)
     history_text = format_history(history)
     standalone_query = chain_module.condense_question(message, history_text)
     print(f"[Rewritten query: {standalone_query}]")
